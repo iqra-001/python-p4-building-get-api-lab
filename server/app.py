@@ -12,6 +12,7 @@ app.json.compact = False
 
 migrate = Migrate(app, db)
 
+# initializes our app and connects it to the db object in our models.py
 db.init_app(app)
 
 @app.route('/')
@@ -20,19 +21,28 @@ def index():
 
 @app.route('/bakeries')
 def bakeries():
-    return ''
+    bakeries = Bakery.query.all()
+
+    return jsonify([bakery.to_dict() for bakery in bakeries]), 200
 
 @app.route('/bakeries/<int:id>')
 def bakery_by_id(id):
-    return ''
+    bakery = Bakery.query.get_or_404(id)
+
+    return jsonify(bakery.to_dict()), 200
+
 
 @app.route('/baked_goods/by_price')
 def baked_goods_by_price():
-    return ''
+    goods = BakedGood.query.order_by(BakedGood.price.desc()).all()
+
+    return jsonify([good.to_dict() for good in goods]), 200
+
 
 @app.route('/baked_goods/most_expensive')
 def most_expensive_baked_good():
-    return ''
+    good = BakedGood.query.order_by(BakedGood.price.desc()).first()
+    return jsonify(good.to_dict()), 200
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
